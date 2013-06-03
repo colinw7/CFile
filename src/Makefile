@@ -15,7 +15,8 @@ SRC = \
 CDir.cpp \
 CFileBase.cpp \
 CFile.cpp \
-CFileDevice.cpp
+CFileDevice.cpp \
+CTempFile.cpp
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
