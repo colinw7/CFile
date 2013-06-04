@@ -7,10 +7,7 @@
 #include <set>
 #include <map>
 #include <iostream>
-
-#ifndef MAXPATHLEN
-# define MAXPATHLEN 4096
-#endif
+#include <sys/param.h>
 
 #define CFileCtrlInst CFileCtrl::getInstance()
 

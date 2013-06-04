@@ -13,14 +13,21 @@ all: $(LIB_DIR)/libCFile.a
 
 SRC = \
 CDir.cpp \
+CDirFTW.cpp \
 CFileBase.cpp \
 CFile.cpp \
 CFileDevice.cpp \
-CTempFile.cpp
+CTempFile.cpp \
+COStreamFile.cpp \
+CFileParse.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
-CPPFLAGS = -I$(INC_DIR) -I.
+CPPFLAGS = \
+-I$(INC_DIR) \
+-I../../COS/include \
+-I../../CStrUtil/include \
+-I.
 
 clean:
 	$(RM) -f $(OBJ_DIR)/*.o
