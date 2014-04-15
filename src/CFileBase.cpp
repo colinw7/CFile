@@ -9,6 +9,7 @@
 #include <cerrno>
 #include <cstring>
 #include <cassert>
+#include <unistd.h>
 
 bool        CFileBase::use_lstat_;
 std::string CFileBase::last_error_;
