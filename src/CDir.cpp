@@ -129,6 +129,8 @@ getFilenames(const std::string &dirname, std::vector<std::string> &filenames)
 
   COSFile::closeDir(handle);
 
+  leave();
+
   return true;
 }
 
@@ -160,6 +162,8 @@ getFilenames(std::vector<std::string> &filenames)
 
   COSFile::closeDir(handle);
 
+  leave();
+
   return true;
 }
 
@@ -187,6 +191,8 @@ processFiles(CDirProcessProc &process)
     process.process();
 
   COSFile::closeDir(handle);
+
+  leave();
 
   return true;
 }
@@ -243,6 +249,8 @@ processSubTree(CDirProcessProc &process, CDir *pdir)
   process.pdirs.pop_back();
 
   COSFile::closeDir(handle);
+
+  leave();
 
   return true;
 }
