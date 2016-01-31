@@ -17,7 +17,7 @@ struct CDirProcessData {
 struct CDirProcessProc {
   CDIR_PROCESS_DATA
 
-  CDirProcessProc() : dir(NULL) { }
+  CDirProcessProc() : dir(0) { }
 
   virtual ~CDirProcessProc() { }
 
@@ -26,8 +26,6 @@ struct CDirProcessProc {
 
 class CDir {
  public:
-  typedef std::vector<int> CDirStack;
-
   typedef bool (*CDirProcessPathListProc)(const std::string &path, void *clientData);
 
  public:
@@ -75,12 +73,6 @@ class CDir {
 
   static std::string getHome();
   static std::string getHome(const std::string &name);
-
-  static CDirStack &getDirStack() {
-    static CDirStack dir_stack;
-
-    return dir_stack;
-  }
 
   static std::string &getErrorMsg() {
     static std::string error_msg;

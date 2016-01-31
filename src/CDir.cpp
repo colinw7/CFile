@@ -15,6 +15,31 @@
 
 //------
 
+namespace CDirStack {
+  typedef std::pair<std::string,int> DirFd;
+  typedef std::vector<DirFd> DirFdStack;
+
+  DirFdStack stack;
+
+  void push(const std::string &name, int fd) {
+    stack.push_back(DirFd(name, fd));
+  }
+
+  bool empty() {
+    return stack.empty();
+  }
+
+  int pop() {
+    DirFd fd = stack.back();
+
+    stack.pop_back();
+
+    return fd.second;
+  }
+}
+
+//------
+
 class CDirScope {
  public:
   explicit CDirScope(const std::string &dirname) :
@@ -276,7 +301,7 @@ enter(const std::string &dirname)
   if (! changeDir(dirname))
     return false;
 
-  getDirStack().push_back(dir_fd);
+  CDirStack::push(dirname, dir_fd);
 
   return true;
 }
@@ -285,15 +310,12 @@ bool
 CDir::
 leave()
 {
-  if (getDirStack().empty()) {
+  if (CDirStack::empty()) {
     getErrorMsg() = "enter/leave mismatch";
-
     return false;
   }
 
-  int dir_fd = getDirStack()[getDirStack().size() - 1];
-
-  getDirStack().pop_back();
+  int dir_fd = CDirStack::pop();
 
   if (fchdir(dir_fd) < 0) {
     getErrorMsg() = "failed to change to original dir";
