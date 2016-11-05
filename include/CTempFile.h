@@ -13,7 +13,6 @@ class CTempFile {
 
   CFile *getFile() const { return file_; }
 
- private:
   static bool getTempFileName(const std::string &dir, std::string &filename);
 
  private:
