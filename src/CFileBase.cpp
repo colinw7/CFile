@@ -1238,6 +1238,18 @@ getSuffix(const std::string &filename)
     return "";
 }
 
+std::string
+CFileBase::
+getTail(const std::string &filename)
+{
+  std::string::size_type pos = filename.rfind('/');
+
+  if (pos != std::string::npos)
+    return filename.substr(pos + 1);
+
+  return filename;
+}
+
 int
 CFileBase::
 getMode() const

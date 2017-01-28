@@ -18,7 +18,7 @@ class CFileBase;
 
 class CFileData {
  public:
-  CFileData(size_t size) :
+  explicit CFileData(size_t size) :
    data_(NULL), size_(0) {
     data_ = new uchar [size];
     size_ = size;
@@ -46,7 +46,7 @@ class CFileLines {
   typedef std::vector<std::string>::iterator iterator;
   typedef std::vector<std::string>::const_iterator const_iterator;
 
-  CFileLines(CFileBase *file) : file_(file), lines_() { }
+  explicit CFileLines(CFileBase *file) : file_(file), lines_() { }
 
  ~CFileLines() { }
 
@@ -232,6 +232,8 @@ class CFileBase {
 
          const std::string &getSuffix() const;
   static       std::string  getSuffix(const std::string &filename);
+
+  static std::string getTail(const std::string &filename);
 
          int getMode() const;
   static int getMode(const std::string &filename);

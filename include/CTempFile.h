@@ -8,7 +8,7 @@ class CTempFile {
   CFile *file_;
 
  public:
-  CTempFile(const std::string &dir="");
+  explicit CTempFile(const std::string &dir="");
  ~CTempFile();
 
   CFile *getFile() const { return file_; }
