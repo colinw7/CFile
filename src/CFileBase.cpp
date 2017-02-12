@@ -182,10 +182,10 @@ toLines()
   CFileLines *lines = new CFileLines(this);
 
   if (! openCheck(READ))
-    return NULL;
+    return nullptr;
 
   if (! rewind())
-    return NULL;
+    return nullptr;
 
   std::string line;
 
@@ -297,7 +297,7 @@ toString()
 {
   CFileData *data = readAll();
 
-  if (data == NULL)
+  if (! data)
     return "";
 
   std::string str((const char *) data->getData(), data->getSize());
@@ -321,7 +321,7 @@ readAll(uchar **data, size_t *len)
 
   *data = new uchar [*len + 1];
 
-  bool flag = read_(*data, *len, NULL);
+  bool flag = read_(*data, *len, nullptr);
 
   (*data)[*len] = 0;
 
@@ -340,22 +340,22 @@ CFileBase::
 readAll()
 {
   if (! openCheck(READ))
-    return NULL;
+    return nullptr;
 
   if (! rewind())
-    return NULL;
+    return nullptr;
 
   size_t size = getSize();
 
   CFileData *file_data = new CFileData(size);
 
-  bool flag = read_(file_data->getData(), size, NULL);
+  bool flag = read_(file_data->getData(), size, nullptr);
 
   close();
 
   if (! flag) {
     last_error_ = "Read Failed";
-    return NULL;
+    return nullptr;
   }
 
   return file_data;
@@ -406,7 +406,7 @@ read(CFileData *file_data)
   if (! openCheck(READ))
     return false;
 
-  if (! read_(file_data->getData(), file_data->getSize(), NULL)) {
+  if (! read_(file_data->getData(), file_data->getSize(), nullptr)) {
     last_error_ = "Read Failed";
     return false;
   }
@@ -421,7 +421,7 @@ read(uchar *data, size_t size)
   if (! openCheck(READ))
     return false;
 
-  if (! read_(data, size, NULL)) {
+  if (! read_(data, size, nullptr)) {
     last_error_ = "Read Failed";
     return false;
   }

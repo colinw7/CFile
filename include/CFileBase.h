@@ -19,7 +19,7 @@ class CFileBase;
 class CFileData {
  public:
   explicit CFileData(size_t size) :
-   data_(NULL), size_(0) {
+   data_(nullptr), size_(0) {
     data_ = new uchar [size];
     size_ = size;
   }
@@ -37,9 +37,11 @@ class CFileData {
   CFileData &operator=(const CFileData &data);
 
  private:
-  uchar  *data_;
-  size_t  size_;
+  uchar  *data_ { nullptr };
+  size_t  size_ { 0 };
 };
+
+//------
 
 class CFileLines {
  public:
@@ -83,9 +85,13 @@ class CFileLines {
   CFileLines &operator=(const CFileLines &data);
 
  private:
-  CFileBase                *file_;
-  std::vector<std::string>  lines_;
+  typedef std::vector<std::string> Lines;
+
+  CFileBase* file_ { nullptr };
+  Lines      lines_;
 };
+
+//------
 
 class CFileBase {
  public:
@@ -97,20 +103,15 @@ class CFileBase {
     READ_WRITE = READ | WRITE
   };
 
- protected:
-  static bool        use_lstat_;
-  static std::string last_error_;
+ public:
+  static std::string toString(const Mode &mode) {
+    if (mode == Mode::READ      ) return "r";
+    if (mode == Mode::WRITE     ) return "w";
+    if (mode == Mode::READ_WRITE) return "rw";
+    if (mode == Mode::APPEND    ) return "a";
 
-  std::string device_;
-  std::string dir_;
-  std::string name_;
-  std::string base_;
-  std::string suffix_;
-  std::string path_;
-  bool        opened_;
-  Mode        mode_;
-  bool        owner_;
-  struct stat file_stat_;
+    return "?";
+  }
 
  public:
   CFileBase();
@@ -147,6 +148,11 @@ class CFileBase {
   bool read(uchar *data, size_t size);
 
   bool read(uchar *data, size_t size, size_t *actual_size);
+
+  template<typename T>
+  bool readType(T &t) {
+    return read((uchar *) &t, sizeof(T));
+  }
 
   bool write(const CFileData *file_data);
   bool write(const std::string &str);
@@ -340,6 +346,21 @@ class CFileBase {
   bool getStat() const;
   bool getFStat() const;
   bool getLStat() const;
+
+ protected:
+  static bool        use_lstat_;
+  static std::string last_error_;
+
+  std::string device_;
+  std::string dir_;
+  std::string name_;
+  std::string base_;
+  std::string suffix_;
+  std::string path_;
+  bool        opened_ { false };
+  Mode        mode_ { NONE };
+  bool        owner_ { false };
+  struct stat file_stat_;
 };
 
 #endif
