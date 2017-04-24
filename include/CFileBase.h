@@ -95,7 +95,7 @@ class CFileLines {
 
 class CFileBase {
  public:
-  enum Mode {
+  enum class Mode {
     NONE       = 0,
     READ       = (1<<0),
     WRITE      = (1<<1),
@@ -358,7 +358,7 @@ class CFileBase {
   std::string suffix_;
   std::string path_;
   bool        opened_ { false };
-  Mode        mode_ { NONE };
+  Mode        mode_ { Mode::NONE };
   bool        owner_ { false };
   struct stat file_stat_;
 };

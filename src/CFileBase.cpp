@@ -16,20 +16,20 @@ std::string CFileBase::last_error_;
 
 CFileBase::
 CFileBase() :
- mode_(NONE)
+ mode_(Mode::NONE)
 {
 }
 
 CFileBase::
 CFileBase(const std::string &filename) :
- mode_(NONE)
+ mode_(Mode::NONE)
 {
   init(filename);
 }
 
 CFileBase::
 CFileBase(const char *filename) :
- mode_(NONE)
+ mode_(Mode::NONE)
 {
   init(filename);
 }
@@ -131,18 +131,18 @@ open(CFileBase::Mode mode)
 
   bool flag;
 
-  if      (mode == READ)
+  if      (mode == Mode::READ)
     flag = open_("rb");
-  else if (mode == WRITE)
+  else if (mode == Mode::WRITE)
     flag = open_("wb");
-  else if (mode == APPEND) {
+  else if (mode == Mode::APPEND) {
     if (! exists())
       flag = open_("wb+");
     else
       flag = open_("rb+");
   }
   else {
-    last_error_ = "Invalid mode " + mode;
+    last_error_ = "Invalid mode '" + toString(mode) + "'";
     return false;
   }
 
@@ -181,7 +181,7 @@ toLines()
 {
   CFileLines *lines = new CFileLines(this);
 
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return nullptr;
 
   if (! rewind())
@@ -210,7 +210,7 @@ bool
 CFileBase::
 toLines(std::vector<std::string> &lines)
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return false;
 
   if (! rewind())
@@ -230,7 +230,7 @@ bool
 CFileBase::
 toLines(std::list<std::string> &lines)
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return false;
 
   if (! rewind())
@@ -268,7 +268,7 @@ bool
 CFileBase::
 readLine(std::string &line)
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return false;
 
   int c;
@@ -311,7 +311,7 @@ bool
 CFileBase::
 readAll(uchar **data, size_t *len)
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return false;
 
   if (! rewind())
@@ -339,7 +339,7 @@ CFileData *
 CFileBase::
 readAll()
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return nullptr;
 
   if (! rewind())
@@ -384,7 +384,7 @@ writeAll(const CFileData *file_data)
 {
   close();
 
-  if (! openCheck(WRITE))
+  if (! openCheck(Mode::WRITE))
     return false;
 
   bool flag = write_(file_data->getData(), file_data->getSize());
@@ -403,7 +403,7 @@ bool
 CFileBase::
 read(CFileData *file_data)
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return false;
 
   if (! read_(file_data->getData(), file_data->getSize(), nullptr)) {
@@ -418,7 +418,7 @@ bool
 CFileBase::
 read(uchar *data, size_t size)
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return false;
 
   if (! read_(data, size, nullptr)) {
@@ -433,7 +433,7 @@ bool
 CFileBase::
 read(uchar *data, size_t size, size_t *actual_size)
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return false;
 
   return read_(data, size, actual_size);
@@ -443,7 +443,7 @@ bool
 CFileBase::
 write(const CFileData *file_data)
 {
-  if (! openCheck(WRITE))
+  if (! openCheck(Mode::WRITE))
     return false;
 
   if (! write_(file_data->getData(), file_data->getSize())) {
@@ -472,7 +472,7 @@ bool
 CFileBase::
 write(const uchar *data, size_t size)
 {
-  if (! openCheck(WRITE))
+  if (! openCheck(Mode::WRITE))
     return false;
 
   if (! write_(data, size)) {
@@ -487,7 +487,7 @@ bool
 CFileBase::
 write(const char *data, size_t size)
 {
-  if (! openCheck(WRITE))
+  if (! openCheck(Mode::WRITE))
     return false;
 
   if (! write_((const uchar *) data, size)) {
@@ -502,7 +502,7 @@ bool
 CFileBase::
 write(uchar c)
 {
-  if (! openCheck(WRITE))
+  if (! openCheck(Mode::WRITE))
     return false;
 
   if (! write_(&c, 1)) {
@@ -517,7 +517,7 @@ bool
 CFileBase::
 write(char c)
 {
-  if (! openCheck(WRITE))
+  if (! openCheck(Mode::WRITE))
     return false;
 
   if (! write_((uchar *) &c, 1)) {
@@ -532,7 +532,7 @@ int
 CFileBase::
 getC()
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return EOF;
 
   int c;
@@ -547,7 +547,7 @@ bool
 CFileBase::
 ungetC(int c)
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return EOF;
 
   if (! ungetc_(c))
@@ -560,7 +560,7 @@ bool
 CFileBase::
 putC(int c)
 {
-  if (! openCheck(WRITE))
+  if (! openCheck(Mode::WRITE))
     return false;
 
   putc_(c);
@@ -572,7 +572,7 @@ bool
 CFileBase::
 rewind()
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return false;
 
   rewind_();
@@ -600,7 +600,7 @@ bool
 CFileBase::
 setPos(long pos)
 {
-  if (! openCheck(READ_WRITE))
+  if (! openCheck(Mode::READ_WRITE))
     return false;
 
   if (! seek_(pos)) {
@@ -615,7 +615,7 @@ bool
 CFileBase::
 setRPos(long pos)
 {
-  if (! openCheck(READ_WRITE))
+  if (! openCheck(Mode::READ_WRITE))
     return false;
 
   if (! rseek_(pos)) {
@@ -630,7 +630,7 @@ bool
 CFileBase::
 setPosStart()
 {
-  if (! openCheck(READ_WRITE))
+  if (! openCheck(Mode::READ_WRITE))
     return false;
 
   if (! seek_(0)) {
@@ -645,7 +645,7 @@ bool
 CFileBase::
 setPosEnd()
 {
-  if (! openCheck(READ_WRITE))
+  if (! openCheck(Mode::READ_WRITE))
     return false;
 
   if (! seek_(-1)) {
@@ -660,7 +660,7 @@ bool
 CFileBase::
 eof()
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return true;
 
   bool flag;
@@ -675,7 +675,7 @@ int
 CFileBase::
 error()
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return true;
 
   int flag;
@@ -690,7 +690,7 @@ bool
 CFileBase::
 flush()
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return true;
 
   return flush_();
@@ -732,7 +732,7 @@ uint
 CFileBase::
 getIDev()
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return 0;
 
   if (! getStat())
@@ -745,7 +745,7 @@ uint
 CFileBase::
 getINode()
 {
-  if (! openCheck(READ))
+  if (! openCheck(Mode::READ))
     return 0;
 
   if (! getStat())
@@ -1145,9 +1145,10 @@ size_t
 CFileBase::
 getSize()
 {
+#if 0
   bool opened;
 
-  if (! openCheck(READ, opened) && ! openCheck(WRITE, opened))
+  if (! openCheck(Mode::READ, opened) && ! openCheck(Mode::WRITE, opened))
     return false;
 
   long pos;
@@ -1158,7 +1159,7 @@ getSize()
   if (! seek_(-1))
     return 0;
 
-  long size;
+  long size = 0;
 
   if (! tell_(size))
     return 0;
@@ -1170,6 +1171,12 @@ getSize()
     close();
 
   return (size_t) size;
+#else
+  if (! getStat())
+    return false;
+
+  return file_stat_.st_size;
+#endif
 }
 
 size_t
@@ -1426,7 +1433,7 @@ openCheck(CFileBase::Mode mode, bool &opened)
   opened = false;
 
   if (opened_) {
-    if (! (mode_ & mode))
+    if (! (uint(mode_) & uint(mode)))
       close();
   }
 
@@ -1521,10 +1528,10 @@ bool
 CFileBase::
 copyBytes(CFileBase &file)
 {
-  if (! open(READ))
+  if (! open(Mode::READ))
     return false;
 
-  if (! file.open(WRITE))
+  if (! file.open(Mode::WRITE))
     return false;
 
   int c;
@@ -1555,7 +1562,7 @@ getFStat() const
 {
   CFileBase *th = const_cast<CFileBase *>(this);
 
-  if (! th->openCheck(READ) && ! th->openCheck(WRITE))
+  if (! th->openCheck(Mode::READ) && ! th->openCheck(Mode::WRITE))
     return false;
 
   if (! th->stat_(&th->file_stat_))
@@ -1570,7 +1577,7 @@ getLStat() const
 {
   CFileBase *th = const_cast<CFileBase *>(this);
 
-  if (! th->openCheck(READ) && ! th->openCheck(WRITE))
+  if (! th->openCheck(Mode::READ) && ! th->openCheck(Mode::WRITE))
     return false;
 
   if (! th->lstat_(&th->file_stat_))

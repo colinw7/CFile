@@ -125,11 +125,11 @@ CFile(FILE *fp) :
   opened_ = true;
 
   if      (isStdIn())
-    mode_ = READ;
+    mode_ = Mode::READ;
   else if (isStdOut())
-    mode_ = WRITE;
+    mode_ = Mode::WRITE;
   else if (isStdErr())
-    mode_ = WRITE;
+    mode_ = Mode::WRITE;
   else
     assert(false);
 

@@ -5,7 +5,7 @@ COStreamFile::
 COStreamFile(std::ostream &os) :
  CFileBase(""), os_(os)
 {
-  mode_   = WRITE;
+  mode_   = Mode::WRITE;
   opened_ = true;
   owner_  = false;
 }
@@ -138,14 +138,14 @@ bool
 COStreamFile::
 isCOut() const
 {
-  return (os_ == std::cout);
+  return (&os_ == &std::cout);
 }
 
 bool
 COStreamFile::
 isCErr() const
 {
-  return (os_ == std::cerr);
+  return (&os_ == &std::cerr);
 }
 
 bool
