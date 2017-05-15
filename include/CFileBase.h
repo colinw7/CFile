@@ -154,6 +154,8 @@ class CFileBase {
     return read((uchar *) &t, sizeof(T));
   }
 
+  bool writef(const char *format, ...);
+
   bool write(const CFileData *file_data);
   bool write(const std::string &str);
   bool write(const char *str);

@@ -441,6 +441,23 @@ read(uchar *data, size_t size, size_t *actual_size)
 
 bool
 CFileBase::
+writef(const char *format, ...)
+{
+  std::string str;
+
+  va_list vargs;
+
+  va_start(vargs, format);
+
+  CStrUtil::vsprintf(str, format, &vargs);
+
+  va_end(vargs);
+
+  return write(str);
+}
+
+bool
+CFileBase::
 write(const CFileData *file_data)
 {
   if (! openCheck(Mode::WRITE))
