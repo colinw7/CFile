@@ -1,5 +1,5 @@
-#ifndef CTEMP_FILE_H
-#define CTEMP_FILE_H
+#ifndef CTempFile_H
+#define CTempFile_H
 
 #include <CFile.h>
 

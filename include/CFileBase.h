@@ -1,5 +1,5 @@
-#ifndef CFILE_BASE_H
-#define CFILE_BASE_H
+#ifndef CFileBase_H
+#define CFileBase_H
 
 #include <sys/stat.h>
 #include <sys/types.h>

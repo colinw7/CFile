@@ -1,5 +1,5 @@
-#ifndef CFILE_H
-#define CFILE_H
+#ifndef CFile_H
+#define CFile_H
 
 #include <CFileBase.h>
 
