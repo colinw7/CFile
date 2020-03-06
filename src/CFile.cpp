@@ -82,11 +82,11 @@ close(CFile *file)
   FileList::iterator p2 = file_map_[num].end  ();
 
   while (p1 != p2) {
-    CFile *file = *p1;
+    CFile *file1 = *p1;
 
-    file_map_[num].erase(file);
+    file_map_[num].erase(file1);
 
-    file->close();
+    file1->close();
 
     p1 = file_map_[num].begin();
     p2 = file_map_[num].end  ();
