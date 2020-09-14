@@ -17,11 +17,15 @@ struct CDirProcessData {
 struct CDirProcessProc {
   CDIR_PROCESS_DATA
 
-  CDirProcessProc() : dir(0) { }
+  CDirProcessProc() : dir(nullptr) { }
 
   virtual ~CDirProcessProc() { }
 
+  virtual void init() { }
+
   virtual void process() = 0;
+
+  virtual void term() { }
 };
 
 class CDir {
@@ -89,7 +93,7 @@ class CDir {
  private:
   CFile       file_;
   std::string dirname_;
-  bool        valid_;
+  bool        valid_ { false };
 };
 
 #endif

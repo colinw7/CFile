@@ -45,7 +45,7 @@ class CFileData {
 
 class CFileLines {
  public:
-  typedef std::vector<std::string>::iterator iterator;
+  typedef std::vector<std::string>::iterator       iterator;
   typedef std::vector<std::string>::const_iterator const_iterator;
 
   explicit CFileLines(CFileBase *file) : file_(file), lines_() { }
@@ -85,7 +85,7 @@ class CFileLines {
   CFileLines &operator=(const CFileLines &data);
 
  private:
-  typedef std::vector<std::string> Lines;
+  using Lines = std::vector<std::string>;
 
   CFileBase* file_ { nullptr };
   Lines      lines_;

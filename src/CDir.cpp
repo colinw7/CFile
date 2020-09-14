@@ -42,8 +42,7 @@ namespace CDirStack {
 
 class CDirScope {
  public:
-  explicit CDirScope(const std::string &dirname) :
-   dir_(0) {
+  explicit CDirScope(const std::string &dirname) {
     entered_ = CDir::enter(dirname);
   }
 
@@ -64,8 +63,8 @@ class CDirScope {
   bool valid() const { return entered_; }
 
  private:
-  const CDir *dir_;
-  bool        entered_;
+  const CDir *dir_     { nullptr };
+  bool        entered_ { false };
 };
 
 //------
@@ -210,10 +209,14 @@ processFiles(CDirProcessProc &process)
   if (! enter(dirname_))
     return false;
 
+  process.init();
+
   void *handle = COSFile::openDir(".");
 
   while (handle && COSFile::readDir(handle, process.filename))
     process.process();
+
+  process.term();
 
   COSFile::closeDir(handle);
 
@@ -254,6 +257,8 @@ processSubTree(CDirProcessProc &process, CDir *pdir)
 
   void *handle = COSFile::openDir(".");
 
+  process.init();
+
   while (handle && COSFile::readDir(handle, process.filename)) {
     if (lstat(process.filename.c_str(), &entry_stat) < 0)
       continue;
@@ -270,6 +275,8 @@ processSubTree(CDirProcessProc &process, CDir *pdir)
     else
       process.process();
   }
+
+  process.term();
 
   process.pdirs.pop_back();
 
