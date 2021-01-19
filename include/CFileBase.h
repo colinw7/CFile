@@ -18,8 +18,8 @@ class CFileBase;
 
 class CFileData {
  public:
-  explicit CFileData(size_t size) :
-   data_(nullptr), size_(0) {
+  explicit
+  CFileData(size_t size) {
     data_ = new uchar [size];
     size_ = size;
   }
@@ -28,61 +28,56 @@ class CFileData {
     delete [] data_;
   }
 
-  uchar  *getData() const { return data_; }
-  uchar   getDataPos(int pos) const { return data_[pos]; }
-  size_t  getSize() const { return size_; }
+  CFileData(const CFileData &data) = delete;
+  CFileData &operator=(const CFileData &data) = delete;
+
+  //---
+
+  uchar *getData() const { return data_; }
+
+  uchar getDataPos(int pos) const { return data_[pos]; }
+
+  size_t getSize() const { return size_; }
 
  private:
-  CFileData(const CFileData &data);
-  CFileData &operator=(const CFileData &data);
-
- private:
-  uchar  *data_ { nullptr };
-  size_t  size_ { 0 };
+  uchar* data_ { nullptr };
+  size_t size_ { 0 };
 };
 
 //------
 
 class CFileLines {
  public:
-  typedef std::vector<std::string>::iterator       iterator;
-  typedef std::vector<std::string>::const_iterator const_iterator;
+  using iterator       = std::vector<std::string>::iterator;
+  using const_iterator = std::vector<std::string>::const_iterator;
 
-  explicit CFileLines(CFileBase *file) : file_(file), lines_() { }
+  explicit
+  CFileLines(CFileBase *file) :
+   file_(file) {
+  }
 
  ~CFileLines() { }
 
-  int size() const {
-    return lines_.size();
-  }
+  CFileLines(const CFileLines &data) = delete;
+  CFileLines &operator=(const CFileLines &data) = delete;
+
+  //---
+
+  CFileBase *file() const { return file_; }
+
+  int size() const { return lines_.size(); }
 
   void addLine(const std::string &line);
 
   std::string getLine(int pos) const;
 
-  iterator begin() {
-    return lines_.begin();
-  }
+  iterator       begin()       { return lines_.begin(); }
+  const_iterator begin() const { return lines_.begin(); }
 
-  const_iterator begin() const {
-    return lines_.begin();
-  }
+  iterator       end()       { return lines_.end(); }
+  const_iterator end() const { return lines_.end(); }
 
-  iterator end() {
-    return lines_.end();
-  }
-
-  const_iterator end() const {
-    return lines_.end();
-  }
-
-  std::string operator[](int pos) const {
-    return getLine(pos);
-  }
-
- private:
-  CFileLines(const CFileLines &data);
-  CFileLines &operator=(const CFileLines &data);
+  std::string operator[](int pos) const { return getLine(pos); }
 
  private:
   using Lines = std::vector<std::string>;
@@ -120,10 +115,14 @@ class CFileBase {
 
   virtual ~CFileBase();
 
+  //---
+
   bool open(CFileBase::Mode mode);
   bool close();
 
   CFileBase::Mode getOpenMode() const { return mode_; }
+
+  //---
 
          CFileLines *toLines();
   static CFileLines *toLines(const std::string &filename);
@@ -131,6 +130,8 @@ class CFileBase {
          bool        toLines(std::list<std::string> &lines);
   static bool        toLines(const std::string &filename, std::vector<std::string> &lines);
   static bool        toLines(const std::string &filename, std::list<std::string> &lines);
+
+  //---
 
   bool readLine(std::string &line);
 
@@ -154,6 +155,8 @@ class CFileBase {
     return read((uchar *) &t, sizeof(T));
   }
 
+  //---
+
   bool writef(const char *format, ...);
 
   bool write(const CFileData *file_data);
@@ -166,9 +169,13 @@ class CFileBase {
   bool write(uchar c);
   bool write(char c);
 
+  //---
+
   int  getC();
   bool ungetC(int c);
   bool putC(int c);
+
+  //---
 
   long getPos();
   bool setPos(long pos);
@@ -177,7 +184,11 @@ class CFileBase {
   bool setPosStart();
   bool setPosEnd();
 
+  //---
+
   bool rewind();
+
+  //---
 
   bool eof();
 
@@ -185,11 +196,17 @@ class CFileBase {
 
   bool flush();
 
+  //---
+
          bool exists() const;
   static bool exists(const std::string &filename);
 
+  //---
+
   uint getIDev ();
   uint getINode();
+
+  //---
 
          CFileType getType();
   static CFileType getType(uint mode);
@@ -229,6 +246,8 @@ class CFileBase {
          size_t getSize();
   static size_t getSize(const std::string &filename);
 
+  //---
+
   // <path> = <device>:<dir>/<name>
   // <name> = <base>.<suffix>
 
@@ -243,6 +262,8 @@ class CFileBase {
 
   static std::string getTail(const std::string &filename);
 
+  //---
+
          int getMode() const;
   static int getMode(const std::string &filename);
 
@@ -250,10 +271,14 @@ class CFileBase {
   int getGMode() const;
   int getOMode() const;
 
+  //---
+
          int getUID() const;
   static int getUID(const std::string &filename);
          int getGID() const;
   static int getGID(const std::string &filename);
+
+  //---
 
          int getMTime() const;
   static int getMTime(const std::string &filename);
@@ -262,31 +287,49 @@ class CFileBase {
          int getATime() const;
   static int getATime(const std::string &filename);
 
+  //---
+
   bool getLinkName(std::string &linkname) const;
 
-  bool isStdIn() const;
+  //---
+
+  bool isStdIn () const;
   bool isStdOut() const;
   bool isStdErr() const;
 
+  //---
+
   static bool expandTilde(const std::string &str, std::string &str1);
-  static bool addTilde(const std::string &str, std::string &str1);
+  static bool addTilde   (const std::string &str, std::string &str1);
+
+  //---
 
   bool remove();
 
   static bool remove(const std::string &str);
 
+  //---
+
   bool copy(CFileBase &file);
+
+  //---
 
   std::string getModeString();
   std::string getUModeString();
   std::string getGModeString();
   std::string getOModeString();
 
-  static bool getStat(const std::string &filename, struct stat *file_stat);
+  //---
+
+  static bool getStat (const std::string &filename, struct stat *file_stat);
   static bool getFStat(const std::string &filename, struct stat *file_stat);
   static bool getLStat(const std::string &filename, struct stat *file_stat);
 
+  //---
+
   void skipSpace();
+
+  //---
 
   static bool getUseLStat() { return use_lstat_; }
 
@@ -360,8 +403,8 @@ class CFileBase {
   std::string suffix_;
   std::string path_;
   bool        opened_ { false };
-  Mode        mode_ { Mode::NONE };
-  bool        owner_ { false };
+  Mode        mode_   { Mode::NONE };
+  bool        owner_  { false };
   struct stat file_stat_;
 };
 

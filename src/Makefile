@@ -20,6 +20,7 @@ CFileDevice.cpp \
 CTempFile.cpp \
 COStreamFile.cpp \
 CFileParse.cpp \
+CFileMatch.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
@@ -27,6 +28,7 @@ CPPFLAGS = \
 -std=c++14 \
 -I$(INC_DIR) \
 -I../../COS/include \
+-I../../CGlob/include \
 -I../../CStrUtil/include \
 -I.
 
