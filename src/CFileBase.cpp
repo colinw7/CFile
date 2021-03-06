@@ -208,7 +208,7 @@ toLines(const std::string &filename)
 
 bool
 CFileBase::
-toLines(std::vector<std::string> &lines)
+toLines(Lines &lines)
 {
   if (! openCheck(Mode::READ))
     return false;
@@ -228,7 +228,7 @@ toLines(std::vector<std::string> &lines)
 
 bool
 CFileBase::
-toLines(std::list<std::string> &lines)
+toLines(LinesList &lines)
 {
   if (! openCheck(Mode::READ))
     return false;
@@ -248,7 +248,7 @@ toLines(std::list<std::string> &lines)
 
 bool
 CFileBase::
-toLines(const std::string &filename, std::vector<std::string> &lines)
+toLines(const std::string &filename, Lines &lines)
 {
   CFile file(filename);
 
@@ -257,7 +257,7 @@ toLines(const std::string &filename, std::vector<std::string> &lines)
 
 bool
 CFileBase::
-toLines(const std::string &filename, std::list<std::string> &lines)
+toLines(const std::string &filename, LinesList &lines)
 {
   CFile file(filename);
 

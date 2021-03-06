@@ -124,12 +124,15 @@ class CFileBase {
 
   //---
 
+  using Lines     = std::vector<std::string>;
+  using LinesList = std::list<std::string>; // needed ?
+
          CFileLines *toLines();
   static CFileLines *toLines(const std::string &filename);
-         bool        toLines(std::vector<std::string> &lines);
-         bool        toLines(std::list<std::string> &lines);
-  static bool        toLines(const std::string &filename, std::vector<std::string> &lines);
-  static bool        toLines(const std::string &filename, std::list<std::string> &lines);
+         bool        toLines(Lines &lines);
+         bool        toLines(LinesList &lines);
+  static bool        toLines(const std::string &filename, Lines &lines);
+  static bool        toLines(const std::string &filename, LinesList &lines);
 
   //---
 
