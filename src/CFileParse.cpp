@@ -1,12 +1,28 @@
 #include <CFileParse.h>
-
 #include <CFile.h>
 #include <CStrUtil.h>
+#include <cassert>
+
+CFileParse::
+CFileParse(const std::string &fileName) :
+ fileName_(fileName)
+{
+  file_ = new CFile(fileName_);
+
+  file_->open(CFile::Mode::READ);
+}
 
 CFileParse::
 CFileParse(CFile *file) :
- file_(file), stream_(false)
+ file_(file), remove_(false)
 {
+}
+
+CFileParse::
+~CFileParse()
+{
+  if (remove_)
+    delete file_;
 }
 
 bool
@@ -99,7 +115,7 @@ readInteger(int *integer)
   while (isDigit())
     str += readChar();
 
-  if (integer != NULL)
+  if (integer != nullptr)
     *integer = CStrUtil::toInteger(str);
 
   return true;
@@ -121,7 +137,7 @@ readInteger(uint *integer)
   while (isDigit())
     str += readChar();
 
-  if (integer != NULL)
+  if (integer != nullptr)
     *integer = CStrUtil::toInteger(str);
 
   return true;
@@ -146,7 +162,7 @@ readBaseInteger(uint base, int *integer)
   while (isBaseChar(base))
     str += readChar();
 
-  if (integer != NULL)
+  if (integer != nullptr)
     *integer = CStrUtil::toBaseInteger(str, base);
 
   return true;
@@ -168,7 +184,7 @@ readBaseInteger(uint base, uint *integer)
   while (isBaseChar(base))
     str += readChar();
 
-  if (integer != NULL)
+  if (integer != nullptr)
     *integer = CStrUtil::toBaseInteger(str, base);
 
   return true;
@@ -221,7 +237,7 @@ readReal(double *real)
   if (str.size() == 0)
     return false;
 
-  if (real != NULL)
+  if (real != nullptr)
     *real = CStrUtil::toReal(str);
 
   //------
@@ -231,23 +247,26 @@ readReal(double *real)
 
 bool
 CFileParse::
-readString(std::string &str)
+readString(std::string &str, bool stripQuotes)
 {
   str = "";
 
-  if (eof1() || ! isChar('\"'))
+  if (eof1() || (! isChar('\"') && ! isChar('\'')))
     return false;
 
-  str += readChar();
+  char strChar = readChar();
 
-  while (! eof1 ()) {
+  if (! stripQuotes)
+    str += strChar;
+
+  while (! eof1()) {
     if      (isChar('\\')) {
       str += readChar();
 
       if (! eof1())
         str += readChar();
     }
-    else if (isChar('\"'))
+    else if (isChar(strChar))
       break;
     else
       str += readChar();
@@ -258,7 +277,10 @@ readString(std::string &str)
     return false;
   }
 
-  str += readChar();
+  strChar = readChar();
+
+  if (! stripQuotes)
+    str += strChar;
 
   return true;
 }
@@ -346,9 +368,18 @@ isDigit()
 
 bool
 CFileParse::
+isOneOf(const std::string &str)
+{
+  auto isCharStr = [&](char c) { return (str.find(c) != std::string::npos); };
+
+  return (! eof1() && isCharStr(lookChar()));
+}
+
+bool
+CFileParse::
 isBaseChar(uint base)
 {
-  return (! eof1() && CStrUtil::isBaseChar(lookChar(), base, NULL));
+  return (! eof1() && CStrUtil::isBaseChar(lookChar(), base, nullptr));
 }
 
 bool
@@ -398,8 +429,8 @@ eof1()
 {
   if (stream_)
     return eof();
-  else
-    return (eol() || eof());
+
+  return eol() || eof();
 }
 
 bool
@@ -430,13 +461,31 @@ skipChar(uint num)
   return true;
 }
 
+std::string
+CFileParse::
+readChars(int n)
+{
+  std::string str;
+
+  for (int i = 0; i < n; ++i) {
+    char c;
+
+    if (! readChar(&c))
+      break;
+
+    str += c;
+  }
+
+  return str;
+}
+
 char
 CFileParse::
 readChar()
 {
   uchar c;
 
-  readChar(&c);
+  (void) readChar(&c);
 
   return c;
 }
@@ -459,12 +508,13 @@ bool
 CFileParse::
 readChar(uchar *c)
 {
-  if (c != NULL)
+  if (c != nullptr)
     *c = '\0';
 
+  uchar c1;
+
   if (! buffer_.empty()) {
-    if (c != NULL)
-      *c = buffer_[0];
+    c1 = buffer_[0];
 
     buffer_.pop_front();
   }
@@ -472,13 +522,20 @@ readChar(uchar *c)
     if (eof1())
       return false;
 
-    uchar c1;
-
-    file_->read(&c1, 1);
-
-    if (c != NULL)
-      *c = c1;
+    if (! readOneChar(c1))
+      return false;
   }
+
+  if (c != nullptr)
+    *c = c1;
+
+  if (c1 == '\n') {
+    ++lineNum_;
+
+    charNum_ = 0;
+  }
+  else
+    ++charNum_;
 
   return true;
 }
@@ -509,11 +566,11 @@ bool
 CFileParse::
 lookChar(uchar *c)
 {
-  if (c != NULL)
+  if (c)
     *c = '\0';
 
   if (! buffer_.empty()) {
-    if (c != NULL)
+    if (c)
       *c = buffer_[0];
   }
   else {
@@ -522,9 +579,10 @@ lookChar(uchar *c)
 
     uchar c1;
 
-    file_->read(&c1, 1);
+    if (! readOneChar(c1))
+      return false;
 
-    if (c != NULL)
+    if (c)
       *c = c1;
 
     buffer_.push_back(c1);
@@ -537,11 +595,11 @@ bool
 CFileParse::
 lookNextChar(uchar *c)
 {
-  if (c != NULL)
+  if (c != nullptr)
     *c = '\0';
 
   if      (buffer_.size() > 1) {
-    if (c != NULL)
+    if (c != nullptr)
       *c = buffer_[1];
   }
   else {
@@ -551,9 +609,10 @@ lookNextChar(uchar *c)
     if (! buffer_.empty()) {
       uchar c1;
 
-      file_->read(&c1, 1);
+      if (! readOneChar(c1))
+        return false;
 
-      if (c != NULL)
+      if (c != nullptr)
         *c = c1;
 
       buffer_.push_back(c1);
@@ -566,7 +625,7 @@ lookNextChar(uchar *c)
       file_->read(c1, 2, &num_read);
 
       if (num_read == 2) {
-        if (c != NULL)
+        if (c != nullptr)
           *c = c1[1];
 
         buffer_.push_back(c1[0]);
@@ -593,7 +652,8 @@ loadLine()
   buffer_.clear();
 
   while (! eof()) {
-    file_->read(&c, 1);
+    if (! readOneChar(c))
+      break;
 
     if (c == '\n')
       break;
@@ -613,6 +673,17 @@ unread(const std::string &str)
 
   for (std::string::size_type i = 0; i < len; ++i, --j)
     buffer_.push_front(str[j]);
+}
+
+bool
+CFileParse::
+readOneChar(uchar &c)
+{
+  size_t num_read;
+
+  file_->read(&c, 1, &num_read);
+
+  return (num_read == 1);
 }
 
 void
@@ -645,6 +716,9 @@ rewind()
     return false;
 
   buffer_.clear();
+
+  lineNum_ = 1;
+  charNum_ = 0;
 
   return true;
 }
