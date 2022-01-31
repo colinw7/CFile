@@ -155,7 +155,7 @@ class CFileBase {
 
   template<typename T>
   bool readType(T &t) {
-    return read((uchar *) &t, sizeof(T));
+    return read(static_cast<uchar *>(&t), sizeof(T));
   }
 
   //---

@@ -588,7 +588,7 @@ void
 CDir::
 processPathList(const std::string &name, CDirProcessPathListProc proc, void *clientData)
 {
-  char *env = getenv((char *) name.c_str());
+  char *env = getenv(const_cast<char *>(name.c_str()));
 
   if (env == NULL)
     return;

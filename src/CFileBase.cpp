@@ -282,7 +282,7 @@ readLine(std::string &line)
   line = "";
 
   while (c != EOF && c != '\n') {
-    line += (char) c;
+    line += static_cast<char>(c);
 
     if (! getc_(c))
       return false;
@@ -300,7 +300,7 @@ toString()
   if (! data)
     return "";
 
-  std::string str((const char *) data->getData(), data->getSize());
+  std::string str(reinterpret_cast<const char *>(data->getData()), data->getSize());
 
   delete data;
 
@@ -482,7 +482,7 @@ bool
 CFileBase::
 write(const char *str)
 {
-  return write((uchar *) str, strlen(str));
+  return write(reinterpret_cast<uchar *>(const_cast<char *>(str)), strlen(str));
 }
 
 bool
@@ -507,7 +507,7 @@ write(const char *data, size_t size)
   if (! openCheck(Mode::WRITE))
     return false;
 
-  if (! write_((const uchar *) data, size)) {
+  if (! write_(reinterpret_cast<const uchar *>(data), size)) {
     last_error_ = "Write Failed";
     return false;
   }
@@ -537,7 +537,7 @@ write(char c)
   if (! openCheck(Mode::WRITE))
     return false;
 
-  if (! write_((uchar *) &c, 1)) {
+  if (! write_(reinterpret_cast<uchar *>(&c), 1)) {
     last_error_ = "Write Failed";
     return false;
   }
