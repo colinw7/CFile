@@ -65,7 +65,7 @@ class CFileLines {
 
   CFileBase *file() const { return file_; }
 
-  int size() const { return lines_.size(); }
+  int size() const { return int(lines_.size()); }
 
   void addLine(const std::string &line);
 

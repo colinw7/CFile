@@ -755,7 +755,7 @@ getIDev()
   if (! getStat())
     return 0;
 
-  return file_stat_.st_dev;
+  return uint(file_stat_.st_dev);
 }
 
 uint
@@ -768,7 +768,7 @@ getINode()
   if (! getStat())
     return 0;
 
-  return file_stat_.st_ino;
+  return uint(file_stat_.st_ino);
 }
 
 CFileType
@@ -803,13 +803,13 @@ CFileType
 CFileBase::
 getType(uint mode)
 {
-  if (isFIFOMode  (mode)) return CFILE_TYPE_INODE_FIFO;
-  if (isCharMode  (mode)) return CFILE_TYPE_INODE_CHR ;
-  if (isDirMode   (mode)) return CFILE_TYPE_INODE_DIR ;
-  if (isBlockMode (mode)) return CFILE_TYPE_INODE_BLK ;
-  if (isRegMode   (mode)) return CFILE_TYPE_INODE_REG ;
-  if (isLinkMode  (mode)) return CFILE_TYPE_INODE_LNK ;
-  if (isSocketMode(mode)) return CFILE_TYPE_INODE_SOCK;
+  if (isFIFOMode  (int(mode))) return CFILE_TYPE_INODE_FIFO;
+  if (isCharMode  (int(mode))) return CFILE_TYPE_INODE_CHR ;
+  if (isDirMode   (int(mode))) return CFILE_TYPE_INODE_DIR ;
+  if (isBlockMode (int(mode))) return CFILE_TYPE_INODE_BLK ;
+  if (isRegMode   (int(mode))) return CFILE_TYPE_INODE_REG ;
+  if (isLinkMode  (int(mode))) return CFILE_TYPE_INODE_LNK ;
+  if (isSocketMode(int(mode))) return CFILE_TYPE_INODE_SOCK;
 
   return CFILE_TYPE_NONE;
 }
@@ -846,13 +846,13 @@ char
 CFileBase::
 getTypeChar(uint mode)
 {
-  if (isFIFOMode  (mode)) return 'p';
-  if (isCharMode  (mode)) return 'c' ;
-  if (isDirMode   (mode)) return 'd' ;
-  if (isBlockMode (mode)) return 'b' ;
-  if (isRegMode   (mode)) return ' ' ;
-  if (isLinkMode  (mode)) return 'l' ;
-  if (isSocketMode(mode)) return 's';
+  if (isFIFOMode  (int(mode))) return 'p';
+  if (isCharMode  (int(mode))) return 'c' ;
+  if (isDirMode   (int(mode))) return 'd' ;
+  if (isBlockMode (int(mode))) return 'b' ;
+  if (isRegMode   (int(mode))) return ' ' ;
+  if (isLinkMode  (int(mode))) return 'l' ;
+  if (isSocketMode(int(mode))) return 's';
 
   return '?';
 }
@@ -981,7 +981,7 @@ isType(CFileModeProc proc) const
     if (! getStat())
       return false;
 
-    if (! proc(file_stat_.st_mode))
+    if (! proc(int(file_stat_.st_mode)))
       return false;
 
     return true;
@@ -999,7 +999,7 @@ isType(CFileModeProc proc, const std::string &filename)
   if (! getStat(filename, &file_stat))
     return false;
 
-  if (! proc(file_stat.st_mode))
+  if (! proc(int(file_stat.st_mode)))
     return false;
 
   return true;
@@ -1009,49 +1009,49 @@ bool
 CFileBase::
 isDirMode(int mode)
 {
-  return COSFile::stat_mode_is_dir(mode);
+  return COSFile::stat_mode_is_dir(uint(mode));
 }
 
 bool
 CFileBase::
 isRegMode(int mode)
 {
-  return COSFile::stat_mode_is_reg(mode);
+  return COSFile::stat_mode_is_reg(uint(mode));
 }
 
 bool
 CFileBase::
 isCharMode(int mode)
 {
-  return COSFile::stat_mode_is_char(mode);
+  return COSFile::stat_mode_is_char(uint(mode));
 }
 
 bool
 CFileBase::
 isBlockMode(int mode)
 {
-  return COSFile::stat_mode_is_block(mode);
+  return COSFile::stat_mode_is_block(uint(mode));
 }
 
 bool
 CFileBase::
 isFIFOMode(int mode)
 {
-  return COSFile::stat_mode_is_fifo(mode);
+  return COSFile::stat_mode_is_fifo(uint(mode));
 }
 
 bool
 CFileBase::
 isLinkMode(int mode)
 {
-  return COSFile::stat_mode_is_link(mode);
+  return COSFile::stat_mode_is_link(uint(mode));
 }
 
 bool
 CFileBase::
 isSocketMode(int mode)
 {
-  return COSFile::stat_mode_is_socket(mode);
+  return COSFile::stat_mode_is_socket(uint(mode));
 }
 
 bool
@@ -1192,7 +1192,7 @@ getSize()
   if (! getStat())
     return false;
 
-  return file_stat_.st_size;
+  return size_t(file_stat_.st_size);
 #endif
 }
 
@@ -1205,7 +1205,7 @@ getSize(const std::string &filename)
   if (! getStat(filename, &file_stat))
     return 0;
 
-  return file_stat.st_size;
+  return size_t(file_stat.st_size);
 }
 
 const std::string &
@@ -1281,7 +1281,7 @@ getMode() const
   if (! getStat())
     return 0;
 
-  return file_stat_.st_mode;
+  return int(file_stat_.st_mode);
 }
 
 int
@@ -1293,7 +1293,7 @@ getMode(const std::string &filename)
   if (! getStat(filename, &file_stat))
     return 0;
 
-  return file_stat.st_mode;
+  return int(file_stat.st_mode);
 }
 
 int
@@ -1324,7 +1324,7 @@ getUID() const
   if (! getStat())
     return 0;
 
-  return file_stat_.st_uid;
+  return int(file_stat_.st_uid);
 }
 
 int
@@ -1336,7 +1336,7 @@ getUID(const std::string &filename)
   if (! getStat(filename, &file_stat))
     return 0;
 
-  return file_stat.st_uid;
+  return int(file_stat.st_uid);
 }
 
 int
@@ -1346,7 +1346,7 @@ getGID() const
   if (! getStat())
     return 0;
 
-  return file_stat_.st_gid;
+  return int(file_stat_.st_gid);
 }
 
 int
@@ -1358,7 +1358,7 @@ getGID(const std::string &filename)
   if (! getStat(filename, &file_stat))
     return 0;
 
-  return file_stat.st_gid;
+  return int(file_stat.st_gid);
 }
 
 int
@@ -1368,7 +1368,7 @@ getMTime() const
   if (! getStat())
     return 0;
 
-  return file_stat_.st_mtime;
+  return int(file_stat_.st_mtime);
 }
 
 int
@@ -1380,7 +1380,7 @@ getMTime(const std::string &filename)
   if (! getStat(filename, &file_stat))
     return 0;
 
-  return file_stat.st_mtime;
+  return int(file_stat.st_mtime);
 }
 
 int
@@ -1390,7 +1390,7 @@ getCTime() const
   if (! getStat())
     return 0;
 
-  return file_stat_.st_ctime;
+  return int(file_stat_.st_ctime);
 }
 
 int
@@ -1402,7 +1402,7 @@ getCTime(const std::string &filename)
   if (! getStat(filename, &file_stat))
     return 0;
 
-  return file_stat.st_ctime;
+  return int(file_stat.st_ctime);
 }
 
 int
@@ -1412,7 +1412,7 @@ getATime() const
   if (! getStat())
     return 0;
 
-  return file_stat_.st_atime;
+  return int(file_stat_.st_atime);
 }
 
 int
@@ -1424,7 +1424,7 @@ getATime(const std::string &filename)
   if (! getStat(filename, &file_stat))
     return 0;
 
-  return file_stat.st_atime;
+  return int(file_stat.st_atime);
 }
 
 bool
@@ -1468,12 +1468,12 @@ bool
 CFileBase::
 expandTilde(const std::string &str, std::string &str1)
 {
-  int len = str.size();
+  auto len = str.size();
 
   if (len == 0 || str[0] != '~')
     return false;
 
-  int i = 1;
+  size_t i = 1;
 
   while (i < len && str[i] != '/')
     i++;
@@ -1702,21 +1702,21 @@ getModeString1(int mode, int type)
   else
     str += '-';
 
-  if (type == S_IRUSR && COSFile::stat_mode_is_uid_on_exec(mode)) {
+  if (type == S_IRUSR && COSFile::stat_mode_is_uid_on_exec(uint(mode))) {
     if (mode & S_IXOTH)
       str[2] = 's';
     else
       str[2] = 'S';
   }
 
-  if (type == S_IRGRP && COSFile::stat_mode_is_gid_on_exec(mode)) {
+  if (type == S_IRGRP && COSFile::stat_mode_is_gid_on_exec(uint(mode))) {
     if (mode & S_IXOTH)
       str[2] = 's';
     else
       str[2] = 'S';
   }
 
-  if (type == S_IROTH && COSFile::stat_mode_is_restrict_delete(mode)) {
+  if (type == S_IROTH && COSFile::stat_mode_is_restrict_delete(uint(mode))) {
     if (mode & S_IXOTH)
       str[2] = 't';
     else
@@ -1746,7 +1746,7 @@ getLine(int pos) const
 {
   assert(pos >= 0 && pos < size());
 
-  return lines_[pos];
+  return lines_[uint(pos)];
 }
 
 void
