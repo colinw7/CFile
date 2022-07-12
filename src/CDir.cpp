@@ -599,9 +599,9 @@ processPathList(const std::string &name, CDirProcessPathListProc proc, void *cli
 
   CStrUtil::addFields(value, paths, ":");
 
-  uint num_paths = paths.size();
+  auto num_paths = paths.size();
 
-  for (uint i = 0; i < num_paths; ++i) {
+  for (size_t i = 0; i < num_paths; ++i) {
     paths[i] = CStrUtil::stripSpaces(paths[i]);
 
     if (! CFile::exists(paths[i]) || ! CFile::isDirectory(paths[i]))

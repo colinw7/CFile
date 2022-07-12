@@ -371,7 +371,7 @@ readlink_(std::string &linkname) const
 {
   static char link_name[MAXPATHLEN + 1];
 
-  int len = readlink(getPath().c_str(), link_name, MAXPATHLEN);
+  auto len = readlink(getPath().c_str(), link_name, MAXPATHLEN);
 
   if (len <= 0)
     return false;
