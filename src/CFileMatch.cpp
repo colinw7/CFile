@@ -71,17 +71,15 @@ matchPattern(const std::string &pattern, std::vector<std::string> &files)
 {
   CStrWords words = CStrUtil::toFields(pattern, "/");
 
-  int num_words = words.size();
-
-  if (num_words == 0)
-    return false;
+  auto num_words = words.size();
+  if (num_words == 0) return false;
 
   std::vector<std::string> words1;
 
-  int i = 0;
+  uint i = 0;
 
   for ( ; i < num_words; i++) {
-    std::string word1 = words[i].getWord();
+    std::string word1 = words[int(i)].getWord();
     std::string word2;
 
     if (CFile::expandTilde(word1, word2))
@@ -109,9 +107,9 @@ matchPattern(const std::string &pattern, std::vector<std::string> &files)
 
     std::vector< std::vector<std::string> > files2_array;
 
-    int num_files = files.size();
+    auto num_files = files.size();
 
-    for (int j = 0; j < num_files; j++) {
+    for (uint j = 0; j < num_files; j++) {
       if (files[j] != "") {
         if (! CFile::exists(files[j]) || ! CFile::isDirectory(files[j]))
           continue;
@@ -126,9 +124,9 @@ matchPattern(const std::string &pattern, std::vector<std::string> &files)
       if (files1.size() > 0) {
         std::vector<std::string> files2;
 
-        int num_files1 = files1.size();
+        auto num_files1 = files1.size();
 
-        for (int k = 0; k < num_files1; k++) {
+        for (uint k = 0; k < num_files1; k++) {
           if (words1[i][0] != '.' &&
               (files1[k].size() > 0 && files1[k][0] == '.'))
             continue;
@@ -152,14 +150,14 @@ matchPattern(const std::string &pattern, std::vector<std::string> &files)
 
     files.clear();
 
-    int num_files2_array = files2_array.size();
+    auto num_files2_array = files2_array.size();
 
-    for (int j = 0; j < num_files2_array; j++)
+    for (uint j = 0; j < num_files2_array; j++)
       copy(files2_array[j].begin(), files2_array[j].end(),
            back_inserter(files));
   }
 
-  int num_files = files.size();
+  auto num_files = files.size();
 
   std::string word;
 
@@ -198,9 +196,9 @@ matchCurrentDir(const std::string &pattern, std::vector<std::string> &files)
 
   (void) dir.getFilenames(filenames);
 
-  int num_filenames = filenames.size();
+  auto num_filenames = filenames.size();
 
-  for (int i = 0; i < num_filenames; i++) {
+  for (uint i = 0; i < num_filenames; i++) {
     const std::string &fileName = filenames[i];
 
     if (isIgnoreFile(fileName))
