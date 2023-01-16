@@ -155,7 +155,7 @@ class CFileBase {
 
   template<typename T>
   bool readType(T &t) {
-    return read(static_cast<uchar *>(&t), sizeof(T));
+    return read(reinterpret_cast<uchar *>(&t), sizeof(T));
   }
 
   //---
@@ -302,8 +302,9 @@ class CFileBase {
 
   //---
 
-  static bool expandTilde(const std::string &str, std::string &str1);
-  static bool addTilde   (const std::string &str, std::string &str1);
+  static bool expandTilde    (const std::string &str, std::string &str1);
+  static bool expandBashTilde(const std::string &str, std::string &str1);
+  static bool addTilde       (const std::string &str, std::string &str1);
 
   //---
 

@@ -1495,6 +1495,47 @@ expandTilde(const std::string &str, std::string &str1)
 
 bool
 CFileBase::
+expandBashTilde(const std::string &str, std::string &str1)
+{
+  auto len = str.size();
+
+  if (len == 0 || str[0] != '~')
+    return false;
+
+  size_t i = 1;
+
+  while (i < len && str[i] != '/')
+    i++;
+
+  std::string name;
+
+  if (i > 1)
+    name = str.substr(1, i - 1);
+
+  if (name != "") {
+    if      (name == "+")
+      str1 = CDir::getCurrent();
+    else if (name == "-")
+      str1 = CDir::getCurrent(); // TODO
+    else if (isdigit(name[0]))
+      str1 = name; // TODO
+    else if (name[0] == '-' && isdigit(name[1]))
+      str1 = name; // TODO
+    else if (name[0] == '+' && isdigit(name[1]))
+      str1 = name; // TODO
+    else
+      str1 = CDir::getHome(name);
+  }
+  else
+    str1 = CDir::getHome();
+
+  str1 += str.substr(i);
+
+  return true;
+}
+
+bool
+CFileBase::
 addTilde(const std::string &str, std::string &str1)
 {
   std::string home = CDir::getHome();

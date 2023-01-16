@@ -22,33 +22,33 @@ class CFile : public CFileBase {
   bool isStdErr() const;
 
  protected:
-  bool open_(const std::string &mode);
-  bool close_();
+  bool open_(const std::string &mode) override;
+  bool close_() override;
 
-  bool read_(uchar *data, size_t size, size_t *actual_size);
+  bool read_(uchar *data, size_t size, size_t *actual_size) override;
 
-  bool write_(const uchar *data, size_t size);
+  bool write_(const uchar *data, size_t size) override;
 
-  bool getc_(int &c);
-  bool ungetc_(int c);
-  bool putc_(int c);
+  bool getc_(int &c) override;
+  bool ungetc_(int c) override;
+  bool putc_(int c) override;
 
-  bool seek_(long pos);
-  bool rseek_(long pos);
-  bool tell_(long &pos);
+  bool seek_(long pos) override;
+  bool rseek_(long pos) override;
+  bool tell_(long &pos) override;
 
-  bool rewind_();
+  bool rewind_() override;
 
-  bool eof_(bool &eof);
+  bool eof_(bool &eof) override;
 
-  bool error_(int &error);
+  bool error_(int &error) override;
 
-  bool flush_();
+  bool flush_() override;
 
-  bool stat_ (struct stat *file_stat);
-  bool lstat_(struct stat *file_stat);
+  bool stat_ (struct stat *file_stat) override;
+  bool lstat_(struct stat *file_stat) override;
 
-  bool readlink_(std::string &linkname) const;
+  bool readlink_(std::string &linkname) const override;
 
  private:
   // not allowed !
