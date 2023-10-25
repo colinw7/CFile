@@ -1,5 +1,5 @@
-#ifndef CDIR_FTW_H
-#define CDIR_FTW_H
+#ifndef CDirFTW_H
+#define CDirFTW_H
 
 #include <string>
 
@@ -7,33 +7,36 @@
 
 class CDirFTW {
  public:
-  CDirFTW(const std::string &dirname);
+  explicit CDirFTW(const std::string &dirname);
 
-  virtual ~CDirFTW() { }
+  virtual ~CDirFTW() = default;
 
-  void setFollowLinks(bool follow) { follow_links_ = follow; }
-  bool getFollowLinks() const { return follow_links_; }
+  bool getFollowLinks() const { return followLinks_; }
+  void setFollowLinks(bool follow) { followLinks_ = follow; }
 
-  void setChangeDir(bool cdir) { change_dir_ = cdir; }
-  bool getChangeDir() const { return change_dir_; }
+  bool getChangeDir() const { return changeDir_; }
+  void setChangeDir(bool cdir) { changeDir_ = cdir; }
 
-  void setDebug(bool debug) { debug_ = debug; }
   bool getDebug() const { return debug_; }
+  void setDebug(bool debug) { debug_ = debug; }
 
   bool walk();
 
-  virtual void process() = 0;
+  virtual bool process() = 0;
 
  protected:
+  const std::string &getDirName () const { return dirname_ ; }
   const std::string &getFileName() const { return filename_; }
   const struct stat *getStat    () const { return stat_    ; }
   CFileType          getType    () const { return type_    ; }
 
+  std::string getBasename() const;
+
  private:
-  void callProcess(const char *filename, struct stat *stat, CFileType type);
+  bool callProcess(const char *filename, struct stat *stat, CFileType type);
 
 #if defined(sun) || defined(__linux__)
-  static int processCB(const char *filename, struct stat *stat, int type);
+  static int processCB(const char *filename, struct stat *stat, int type, struct FTW *ftw);
 #else
   static int processCB(const char *filename, struct stat *stat, int type, struct FTW *ftw);
 #endif
@@ -43,12 +46,11 @@ class CDirFTW {
 
   std::string  dirname_;
   std::string  filename_;
-  bool         follow_links_;
-  bool         change_dir_;
-  bool         debug_;
-  struct stat *stat_;
-  CFileType    type_;
-  std::string  link_dirname_;
+  bool         followLinks_ { false };
+  bool         changeDir_   { false };
+  bool         debug_       { false };
+  struct stat *stat_        { nullptr };
+  CFileType    type_        { CFILE_TYPE_NONE };
 };
 
 #endif
