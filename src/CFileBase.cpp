@@ -295,10 +295,8 @@ std::string
 CFileBase::
 toString()
 {
-  CFileData *data = readAll();
-
-  if (! data)
-    return "";
+  auto *data = readAll();
+  if (! data) return "";
 
   std::string str(reinterpret_cast<const char *>(data->getData()), data->getSize());
 
